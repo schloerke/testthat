@@ -104,7 +104,7 @@ test_that("check_installed() checks minimum version", {
 #>   check_installed("testthat", "99.99.999")
 #> Condition
 #>   Error in `check_installed()`:
-#>   ! {testthat} version 3.3.0.9000 is installed, but 99.99.999 is required.
+#>   ! {testthat} version 3.3.2.9000 is installed, but 99.99.999 is required.
 #> Test passed with 2 successes 🎊.
 ```
 
@@ -292,7 +292,7 @@ function to mock.
 ``` r
 unix_time <- function() unclass(Sys.time())
 unix_time()
-#> [1] 1763734421
+#> [1] 1770139645
 ```
 
 Now I’m going to create a function factory that makes it easy to compute
@@ -309,7 +309,7 @@ elapsed <- function() {
 timer <- elapsed()
 Sys.sleep(0.5)
 timer()
-#> [1] 0.5017302
+#> [1] 0.5017095
 ```
 
 Imagine trying to test this function without mocking! You’d probably

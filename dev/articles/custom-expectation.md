@@ -144,6 +144,14 @@ If the object is as expected, call
 [`pass()`](https://testthat.r-lib.org/dev/reference/fail.md). This
 ensures that a success will be registered in the test reporter.
 
+Otherwise, call
+[`fail()`](https://testthat.r-lib.org/dev/reference/fail.md). This
+ensures that a failure will be registered in the test reporter. NB:
+unlike [`stop()`](https://rdrr.io/r/base/stop.html) or `abort()`,
+[`fail()`](https://testthat.r-lib.org/dev/reference/fail.md) signals a
+failure but allows code execution to continue, ensuring that one failure
+does not prevent subsequent expectations from running.
+
 Finally, return the input value (`act$val`) invisibly. This is good
 practice because expectations are called primarily for their
 side-effects (triggering a failure), and returning the value allows
@@ -257,10 +265,12 @@ expect_vector_length <- function(object, n) {
 
 ``` r
 expect_vector_length(mean, 1)
-#> Error: Expected `mean` to be a vector
+#> Error:
+#> ! Expected `mean` to be a vector
 #> Actual type: closure
 expect_vector_length(mtcars, 15)
-#> Error: Expected `mtcars` to have length 15.
+#> Error:
+#> ! Expected `mtcars` to have length 15.
 #> Actual length: 11.
 ```
 
@@ -307,12 +317,15 @@ x2 <- TestClass()
 x3 <- factor()
 
 expect_s3_class(x1, "integer")
-#> Error: Expected `x1` to be an object.
+#> Error:
+#> ! Expected `x1` to be an object.
 expect_s3_class(x2, "integer")
-#> Error: Expected `x2` to be an S3 object.
+#> Error:
+#> ! Expected `x2` to be an S3 object.
 #> Actual OO type: S4
 expect_s3_class(x3, "integer")
-#> Error: Expected `x3` to inherit from integer.
+#> Error:
+#> ! Expected `x3` to inherit from integer.
 #> Actual class: factor
 expect_s3_class(x3, "factor")
 ```
@@ -398,8 +411,10 @@ The key challenge is that
 [`fail()`](https://testthat.r-lib.org/dev/reference/fail.md) captures a
 `trace_env`, which should be the execution environment of the
 expectation. This usually works because the default value of `trace_env`
-is `caller_env()`. But when you introduce a helper, you’ll need to
-explicitly pass it along:
+is
+[`rlang::caller_env()`](https://rlang.r-lib.org/reference/stack.html).
+But when you introduce a helper, you’ll need to explicitly pass it
+along:
 
 ``` r
 expect_length_ <- function(act, n, trace_env = caller_env()) {

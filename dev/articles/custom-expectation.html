@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">testthat</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -227,6 +227,11 @@ failure message: the first element describes what we expected, and then
 the second line reports what we actually saw.</p>
 <p>If the object is as expected, call <code><a href="../reference/fail.html">pass()</a></code>. This ensures
 that a success will be registered in the test reporter.</p>
+<p>Otherwise, call <code><a href="../reference/fail.html">fail()</a></code>. This ensures that a failure will
+be registered in the test reporter. NB: unlike <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> or
+<code>abort()</code>, <code><a href="../reference/fail.html">fail()</a></code> signals a failure but allows
+code execution to continue, ensuring that one failure does not prevent
+subsequent expectations from running.</p>
 <p>Finally, return the input value (<code>act$val</code>) invisibly.
 This is good practice because expectations are called primarily for
 their side-effects (triggering a failure), and returning the value
@@ -332,10 +337,12 @@ atomic vector or a list:</p>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">expect_vector_length</span><span class="op">(</span><span class="va">mean</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: Expected `mean` to be a vector</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Expected `mean` to be a vector</span></span>
 <span><span class="co">#&gt; Actual type: closure</span></span>
 <span><span class="fu">expect_vector_length</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fl">15</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: Expected `mtcars` to have length 15.</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Expected `mtcars` to have length 15.</span></span>
 <span><span class="co">#&gt; Actual length: 11.</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -380,12 +387,15 @@ correct OO family.</p>
 <span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/inheritance-expectations.html">expect_s3_class</a></span><span class="op">(</span><span class="va">x1</span>, <span class="st">"integer"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: Expected `x1` to be an object.</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Expected `x1` to be an object.</span></span>
 <span><span class="fu"><a href="../reference/inheritance-expectations.html">expect_s3_class</a></span><span class="op">(</span><span class="va">x2</span>, <span class="st">"integer"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: Expected `x2` to be an S3 object.</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Expected `x2` to be an S3 object.</span></span>
 <span><span class="co">#&gt; Actual OO type: S4</span></span>
 <span><span class="fu"><a href="../reference/inheritance-expectations.html">expect_s3_class</a></span><span class="op">(</span><span class="va">x3</span>, <span class="st">"integer"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: Expected `x3` to inherit from integer.</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Expected `x3` to inherit from integer.</span></span>
 <span><span class="co">#&gt; Actual class: factor</span></span>
 <span><span class="fu"><a href="../reference/inheritance-expectations.html">expect_s3_class</a></span><span class="op">(</span><span class="va">x3</span>, <span class="st">"factor"</span><span class="op">)</span></span></code></pre></div>
 <p>Note the variety of error messages. We always print what was
@@ -467,7 +477,7 @@ because it’s important to get it right in testthat itself.</p>
 <p>The key challenge is that <code><a href="../reference/fail.html">fail()</a></code> captures a
 <code>trace_env</code>, which should be the execution environment of the
 expectation. This usually works because the default value of
-<code>trace_env</code> is <code>caller_env()</code>. But when you
+<code>trace_env</code> is <code><a href="https://rlang.r-lib.org/reference/stack.html" class="external-link">rlang::caller_env()</a></code>. But when you
 introduce a helper, you’ll need to explicitly pass it along:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expect_length_</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">act</span>, <span class="va">n</span>, <span class="va">trace_env</span> <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
